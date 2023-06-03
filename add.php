@@ -1,5 +1,9 @@
 <?php 
  
+
+include('./config/bd_connect.php');
+
+
 // if (isset($_GET['submit'])){   JUSTE POUR TESTER AVEC GET MAIS AVEC POST C'EST MIIEUX CAR PLUS Sécurisé(les informations de ce qui a été submit ne s'affiche pas)
   //  echo $_GET['email'];
   //  echo $_GET['title'];
@@ -9,6 +13,7 @@
 
 
  $title = $email = $ingredients = '';//initialiser les chars
+
 $errors = array('email' => '','title' => '','ingredients' => '');/*on stockes les valeurs d'erreur dans cette array*/
 
 
@@ -56,8 +61,22 @@ if (array_filter($errors)){
     //echo 'errors in the form';
 } else {
    // echo 'no errors';
+   $email = mysqli_real_escape_string($conn,$_POST['email']);
+   $title = mysqli_real_escape_string($conn,$_POST['title']);
+   $ingredients = mysqli_real_escape_string($conn,$_POST['ingredients']);
 
-   header('Location: index.php');/*si pas d'erreurs après submit aller vers autre page*/
+//create the appropiate sql command
+$sql = "INSERT INTO pizzas (email, title, ingredients) VALUES ('$email', '$title', '$ingredients')";
+
+//save to db and check
+if (mysqli_query($conn,$sql)){
+//success
+ header('Location: index.php');/*si pas d'erreurs après submit aller vers autre page*/
+}else {
+ echo 'query error:' . mysqli_error($conn);
+}
+
+
 }
 
 
